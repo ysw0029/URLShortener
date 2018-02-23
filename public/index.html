@@ -1,0 +1,78 @@
+<html>
+  <head>
+    <title>URL Shortener</title>
+    <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+  </head>
+  <body>
+    <br><br>
+
+    <form id="createUrl" role="form">
+      <input type="url" id="longUrl">
+      <button type="submit">Shorten !</button>
+    </form>
+
+    <br><br>
+
+    <h2><strong id="shortUrl"></strong></h2></p>
+    <h2><strong id="cnt"></strong></h2>
+
+    <table border="1" id="table">
+       <tr>
+          <th>Title1</th>
+          <th>Title2</th>
+      </tr>
+      <tr>
+         <th>Title1</th>
+         <th>Title2</th>
+     </tr>
+    </table>
+
+    <script type="text/javascript">
+      $.ajax({
+        url: '/api/history'
+        , dataType : 'json'
+        , type: 'POST'
+        , success: function(data){
+          console.log(data);
+          for(var i=0; i<data.length; i++){
+            $('#table').append('<tr>');
+            $('#table').append('<th>'+data[i].url+'</th>');
+            $('#table').append('<th>'+data[i].cnt+'</th>');
+            $('#table').append('</tr>');
+          }
+        }
+        , error: function(jqXHR, textStatus, errorThrown){
+            console.log(errorThrown);
+        }
+      });
+    </script>
+
+    <script type="text/javascript">
+      var API_SERVER = 'http://localhost:3000';
+
+      $( "#createUrl" ).submit(function( event ) {
+
+        event.preventDefault();
+
+        var longUrl = $('#longUrl').val();
+
+        $.ajax({
+          url: '/url/' + encodeURIComponent(longUrl)
+          , crossDomain: true
+          , dataType: "json"
+          , type: 'GET'
+          , data: {}
+          , success: success
+          , error: function(jqXHR, textStatus, errorThrown){
+              console.log(errorThrown);
+          }
+        });
+
+      });
+
+      var success = function(data){
+        $('#shortUrl').text(API_SERVER +'/' +data.key);
+      };
+    </script>
+  </body>
+ </html>
